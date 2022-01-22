@@ -17,47 +17,46 @@ class i18next {
      * Path for the translation files
      * @var string Path
      */
-    private static $_path = null;
+    private string $_path = '';
 
     /**
      * Primary language to use
      * @var string Code for the current language
      */
-    private static $_language = null;
+    private string $_language = '';
 
     /**
      * Fallback language for translations not found in current language
      * @var string Fallback language
      */
-    private static $_fallbackLanguage = 'dev';
+    private string $_fallbackLanguage = 'dev';
 
     /**
      * Array to store the translations
      * @var array Translations
      */
-    private static $_translation = array();
+    private array $_translation = [];
 
     /**
      * Logs keys for missing translations
      * @var array Missing keys
      */
-    private static $_missingTranslation = array();
-
+    private array $_missingTranslation = [];
 
     /**
-     * Inits i18next static class
+     * Inits i18next class
      * Path may include __lng___ and __ns__ placeholders so all languages and namespaces are loaded
      *
      * @param string $language Locale language code
-     * @param string $path Path to locale json files
+     * @param ?string $path Path to locale json files
+     *
+     * @throws \Exception via loadTranslation
      */
-    public static function init($language = 'en', $path = null) {
+    public function __construct(string $language = 'en', string $path = null) {
+        $this->_language = $language;
+        $this->_path = $path;
 
-        self::$_language = $language;
-        self::$_path = $path;
-
-        self::loadTranslation();
-
+        $this->loadTranslation();
     }
 
     /**
@@ -65,14 +64,14 @@ class i18next {
      * If fallback is not set it is left unchanged
      *
      * @param string $language New default language
-     * @param string $fallback Fallback language
+     * @param ?string $fallback Fallback language
      */
-    public static function setLanguage($language, $fallback = null) {
+    public function setLanguage(string $language, string $fallback = null) {
 
-        self::$_language = $language;
+        $this->_language = $language;
 
         if (!empty($fallback))
-            self::$_fallbackLanguage = $fallback;
+            $this->_fallbackLanguage = $fallback;
 
     }
 
@@ -81,9 +80,9 @@ class i18next {
      *
      * @return array Missing translations
      */
-    public static function getMissingTranslations() {
+    public function getMissingTranslations(): array {
 
-        return self::$_missingTranslation;
+        return $this->_missingTranslation;
 
     }
 
@@ -93,9 +92,9 @@ class i18next {
      * @param string $key Key for translation
      * @return boolean Stating the result
      */
-    public static function existTranslation($key) {
+    public function existTranslation(string $key) {
 
-        $return = self::_getKey($key);
+        $return = $this->_getKey($key);
 
         if ($return)
             $return = true;
@@ -111,20 +110,20 @@ class i18next {
      * @param array $variables Variables
      * @return mixed Translated string or array
      */
-    public static function getTranslation($key, $variables = array()) {
+    public function getTranslation(string $key, array $variables = array()) {
 
-        $return = self::_getKey($key, $variables);
+        $return = $this->_getKey($key, $variables);
 
         // Log missing translation
         if (!$return && array_key_exists('lng', $variables))
-            array_push(self::$_missingTranslation, array('language' => $variables['lng'], 'key' => $key));
+            array_push($this->_missingTranslation, array('language' => $variables['lng'], 'key' => $key));
 
         else if (!$return)
-            array_push(self::$_missingTranslation, array('language' => self::$_language, 'key' => $key));
+            array_push($this->_missingTranslation, array('language' => $this->_language, 'key' => $key));
 
         // fallback language check
-        if (!$return && !isset($variables['lng']) && !empty(self::$_fallbackLanguage))
-            $return = self::_getKey($key, array_merge($variables, array('lng'=>  self::$_fallbackLanguage)));
+        if (!$return && !isset($variables['lng']) && !empty($this->_fallbackLanguage))
+            $return = $this->_getKey($key, array_merge($variables, array('lng'=>  $this->_fallbackLanguage)));
 
         if (!$return && array_key_exists('defaultValue', $variables))
             $return = $variables['defaultValue'];
@@ -159,15 +158,15 @@ class i18next {
      * Loads translation(s)
      * @throws \Exception
      */
-    private static function loadTranslation() {
+    private function loadTranslation() {
 
-        $path = preg_replace('/__(.+?)__/', '*', self::$_path, 2, $hasNs);
+        $path = preg_replace('/__(.+?)__/', '*', $this->_path, 2, $hasNs);
 
         if (!preg_match('/\.json$/', $path)) {
 
             $path = $path . 'translation.json';
 
-            self::$_path = self::$_path . 'translation.json';
+            $this->_path = $this->_path . 'translation.json';
 
         }
 
@@ -187,43 +186,43 @@ class i18next {
 
             if ($hasNs) {
 
-                $regexp = preg_replace('/__(.+?)__/', '(?<$1>.+)?', preg_quote(self::$_path, '/'));
+                $regexp = preg_replace('/__(.+?)__/', '(?<$1>.+)?', preg_quote($this->_path, '/'));
 
                 preg_match('/^' . $regexp . '$/', $file, $ns);
 
                 if (!array_key_exists('lng', $ns))
-                    $ns['lng'] = self::$_language;
+                    $ns['lng'] = $this->_language;
 
                 if (array_key_exists('ns', $ns)) {
 
-                    if (array_key_exists($ns['lng'], self::$_translation) && array_key_exists($ns['ns'], self::$_translation[$ns['lng']]))
-                        self::$_translation[$ns['lng']][$ns['ns']] = array_merge(self::$_translation[$ns['lng']][$ns['ns']], array($ns['ns'] => $translation));
+                    if (array_key_exists($ns['lng'], $this->_translation) && array_key_exists($ns['ns'], $this->_translation[$ns['lng']]))
+                        $this->_translation[$ns['lng']][$ns['ns']] = array_merge($this->_translation[$ns['lng']][$ns['ns']], array($ns['ns'] => $translation));
 
-                    else if (array_key_exists($ns['lng'], self::$_translation))
-                        self::$_translation[$ns['lng']] = array_merge(self::$_translation[$ns['lng']], array($ns['ns'] => $translation));
+                    else if (array_key_exists($ns['lng'], $this->_translation))
+                        $this->_translation[$ns['lng']] = array_merge($this->_translation[$ns['lng']], array($ns['ns'] => $translation));
 
                     else
-                        self::$_translation[$ns['lng']] = array($ns['ns'] => $translation);
+                        $this->_translation[$ns['lng']] = array($ns['ns'] => $translation);
 
                 }
                 else {
 
-                    if (array_key_exists($ns['lng'], self::$_translation))
-                        self::$_translation[$ns['lng']] = array_merge(self::$_translation[$ns['lng']], $translation);
+                    if (array_key_exists($ns['lng'], $this->_translation))
+                        $this->_translation[$ns['lng']] = array_merge($this->_translation[$ns['lng']], $translation);
 
                     else
-                        self::$_translation[$ns['lng']] = $translation;
+                        $this->_translation[$ns['lng']] = $translation;
 
                 }
 
             }
             else {
 
-                if (array_key_exists(self::$_language, $translation))
-                    self::$_translation = $translation;
+                if (array_key_exists($this->_language, $translation))
+                    $this->_translation = $translation;
 
                 else
-                    self::$_translation = array_merge(self::$_translation, $translation);
+                    $this->_translation = array_merge($this->_translation, $translation);
 
             }
 
@@ -241,15 +240,15 @@ class i18next {
      * @param array $variables Variables
      * @return mixed Translated string or array if requested. False if translation doesn't exist
      */
-    private static function _getKey($key, $variables = array()) {
+    private function _getKey(string $key, array $variables = array()) {
 
         $return = false;
 
-        if (array_key_exists('lng', $variables) && array_key_exists($variables['lng'], self::$_translation))
-            $translation = self::$_translation[$variables['lng']];
+        if (array_key_exists('lng', $variables) && array_key_exists($variables['lng'], $this->_translation))
+            $translation = $this->_translation[$variables['lng']];
 
-        else if (array_key_exists(self::$_language, self::$_translation))
-            $translation = self::$_translation[self::$_language];
+        else if (array_key_exists($this->_language, $this->_translation))
+            $translation = $this->_translation[$this->_language];
 
         else
             $translation = array();
