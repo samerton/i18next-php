@@ -48,7 +48,7 @@ final class i18nextTest extends TestCase {
         $this->assertSame('100 girlfriends', i18next::getTranslation('friend', ['context' => 'female', 'count' => 100]));
 
         // Multiline object
-        $this->assertSame(19, count(i18next::getTranslation('animal.thedoglovers', ['returnObjectTrees' => true])));
+        $this->assertCount(19, i18next::getTranslation('animal.thedoglovers', ['returnObjectTrees' => true]));
     }
 
 }
