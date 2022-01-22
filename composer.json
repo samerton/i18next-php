@@ -1,7 +1,7 @@
 {
     "name": "samerton/i18next",
     "description": "PHP class for basic i18next functionality ",
-    "version": "0.1.2",
+    "version": "1.0.0",
     "keywords": [
         "i18next",
         "i18n"
