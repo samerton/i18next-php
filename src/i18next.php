@@ -50,11 +50,15 @@ class i18next {
      *
      * @param string $language Locale language code
      * @param string $path Path to locale json files
+     * @param string $fallback Optional fallback language code
      */
-    public static function init($language = 'en', $path = null) {
+    public static function init($language = 'en', $path = null, $fallback = null) {
 
         self::$_language = $language;
         self::$_path = $path;
+
+        if (!empty($fallback))
+            self::$_fallbackLanguage = $fallback;
 
         self::loadTranslation();
 
