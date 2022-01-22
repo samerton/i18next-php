@@ -1,9 +1,9 @@
 <?php
 
-namespace Aiken\i18next\Test;
+namespace samerton\i18next\Test;
 
 use PHPUnit\Framework\TestCase;
-use Aiken\i18next\i18next;
+use samerton\i18next\i18next;
 
 final class i18nextTest extends TestCase {
 

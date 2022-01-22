@@ -9,7 +9,7 @@
  * ----------------------------------------------------------------------------
  */
 
-namespace Aiken\i18next;
+namespace samerton\i18next;
 
 class i18next {
 
