@@ -1,12 +1,12 @@
 {
-    "name": "aiken/i18next",
+    "name": "samerton/i18next",
     "description": "PHP class for basic i18next functionality ",
     "version": "0.1.0",
     "keywords": [
         "i18next",
         "i18n"
     ],
-    "homepage": "https://github.com/Mika-/i18next-php",
+    "homepage": "https://github.com/samerton/i18next-php",
     "license": "Beerware",
     "authors": [
         {
@@ -22,12 +22,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Aiken\\i18next\\": "src"
+            "samerton\\i18next\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Aiken\\i18next\\Test\\": "tests"
+            "samerton\\i18next\\Test\\": "tests"
         }
     }
 }
