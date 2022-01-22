@@ -255,7 +255,7 @@ class i18next {
             $translation = $this->_translation[$this->_language];
 
         else
-            $translation = array();
+            $translation = $this->_translation;
 
         // path traversal - last array will be response
         $paths_arr = explode('.', $key);
