@@ -49,12 +49,16 @@ class i18next {
      *
      * @param string $language Locale language code
      * @param ?string $path Path to locale json files
+     * @param ?string $fallback Optional fallback language code
      *
      * @throws \Exception via loadTranslation
      */
-    public function __construct(string $language = 'en', string $path = null) {
+    public function __construct(string $language = 'en', string $path = null, string $fallback = null) {
         $this->_language = $language;
         $this->_path = $path;
+
+        if (!empty($fallback))
+            $this->_fallbackLanguage = $fallback;
 
         $this->loadTranslation();
     }
